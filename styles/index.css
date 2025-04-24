@@ -1,0 +1,73 @@
+@import url(/styles/general.css);
+@import url(/styles/components.css);
+
+h2 {
+  font-size: 1.2rem;
+}
+
+.status {
+  height: 10vh;
+  background-color: var(--off-white);
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: 'Playfair Display SC', serif;
+  font-size: 2rem;
+  color: var(--secondary-base);
+}
+
+.main-game {
+  display: flex;
+  flex-direction: column;
+}
+
+.table {
+  height: 70vh;
+  background-image: radial-gradient(var(--primary-tint-2), var(--primary-base));
+  border-top: 10px solid var(--primary-base);
+  border-bottom: 10px solid var(--primary-base);
+  display: flex;
+  color: var(--off-white);
+}
+
+.player {
+  width: 50%;
+  height: 100%;
+  border-right: 10px solid var(--primary-base);
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.dealer {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.actions {
+  height: 20vh;
+  background-color: var(--off-white);
+  display: flex;
+  justify-content: space-between;
+}
+
+.hit-stand-div,
+.bet-div {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.bet {
+  width: 7rem;
+  padding-left: 1rem;
+}

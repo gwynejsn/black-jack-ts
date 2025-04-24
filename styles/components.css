@@ -1,0 +1,41 @@
+@import url(/styles/general.css);
+
+.btn {
+  background-image: radial-gradient(
+    var(--secondary-tint),
+    var(--secondary-base)
+  );
+  font-weight: 600;
+  color: var(--off-white);
+  border: none;
+  padding: 1rem;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.btn:active {
+  opacity: 80%;
+}
+
+.label {
+  font-size: 1.5rem;
+}
+
+.input {
+  background-color: transparent;
+  border: 2px solid var(--primary-base);
+  padding: 0.5rem;
+  font-size: 1rem;
+  color: var(--primary-base);
+}
+
+.input:focus {
+  outline: none;
+}
+
+.border-pill {
+  min-width: 5rem;
+  min-height: 3rem;
+  border-radius: calc(5rem / 2);
+}

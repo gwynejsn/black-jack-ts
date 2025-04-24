@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-base: #386641;
+  --primary-shade: #081c15;
+  --primary-tint: #6a994e;
+  --primary-tint-2: #a7c957;
+  --secondary-base: #bc4749;
+  --secondary-tint: #c96c6d;
+  --secondary-shade: #5e2425;
+  --off-white: #f5eedd;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+  font-size: 62.5%;
+  font-family: 'poppins', sans-serif;
+  line-height: 1.2rem;
+  font-weight: 400;
+  overflow: hidden;
+}
