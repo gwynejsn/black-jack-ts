@@ -1,18 +1,30 @@
 export default class UserEvents {
-    constructor(game, config) {
+    constructor(config, user, statusUIHandler, deckBuilder) {
         this.hitBtn = document.querySelector('.hit');
+        this.hitBtn.disabled = true;
         this.standBtn = document.querySelector('.stand');
+        this.standBtn.disabled = true;
         this.betBtn = document.querySelector('.submit-bet');
         this.betInput = document.querySelector('#bet');
         this.betInput.defaultValue = config.getMinBet() + '';
-        this.game = game;
-        this.buttonEvents();
+        this.user = user;
+        this.statusUIHandler = statusUIHandler;
+        this.deckBuilder = deckBuilder;
     }
-    buttonEvents() {
-        this.hitBtn.addEventListener('click', this.game.playerHit);
-        this.standBtn.addEventListener('click', this.game.playerStand);
-        this.betBtn.addEventListener('click', this.game.playerBet);
-        this.betInput.addEventListener('input', () => this.betValidator());
+    askAction() {
+        return new Promise((resolve) => {
+            this.hitBtn.addEventListener('click', () => this.deckBuilder.addCard(this.user));
+            this.standBtn.addEventListener('click', () => resolve());
+        });
+    }
+    askBet() {
+        return new Promise((resolve) => {
+            this.betInput.addEventListener('input', () => this.betValidator());
+            this.betBtn.addEventListener('click', () => {
+                this.setUserBet();
+                resolve();
+            });
+        });
     }
     betValidator() {
         let bet;
@@ -29,5 +41,12 @@ export default class UserEvents {
             this.betInput.classList.add('wrong-input');
             this.betBtn.disabled = true;
         }
+    }
+    setUserBet() {
+        this.user.setMoney(this.user.getMoney() - Number(this.betInput.value));
+        this.statusUIHandler.updateUserMoney();
+        this.betBtn.disabled = true;
+        this.hitBtn.disabled = false;
+        this.standBtn.disabled = false;
     }
 }

@@ -1,10 +1,11 @@
 import Card from './Card.js';
 export default class DeckBuilder {
-    constructor(config) {
+    constructor(config, tableUIHandler) {
         this.uniqueChecker = new Set();
         this.suits = ['H', 'D', 'S', 'C'];
         this.ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; // 11 = J, 12 = K, 13 = Q, 14 = A
         this.config = config;
+        this.tableUIHandler = tableUIHandler;
     }
     distributeCards(players) {
         players.forEach((player) => {
@@ -22,5 +23,9 @@ export default class DeckBuilder {
     }
     randomNo(length) {
         return Math.floor(Math.random() * length);
+    }
+    addCard(player) {
+        player.addCard(this.generateCard());
+        this.tableUIHandler.displayAddedCard(player);
     }
 }

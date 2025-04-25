@@ -9,20 +9,54 @@ export default class Game {
     constructor() {
         console.log('initializing game...');
         this.config = new Config();
-        this.userEvents = new UserEvents(this, this.config);
-        this.statusUIHandler = new StatusUIHandler(this.config);
-        this.tableUIHandler = new TableUIHandler(this.config);
-        this.deckBuilder = new DeckBuilder(this.config);
-        this.user = new User();
+        this.user = new User(this.config);
         this.dealer = new Dealer();
+        this.statusUIHandler = new StatusUIHandler(this.user, this);
+        this.tableUIHandler = new TableUIHandler(this.config);
+        this.deckBuilder = new DeckBuilder(this.config, this.tableUIHandler);
+        this.userEvents = new UserEvents(this.config, this.user, this.statusUIHandler, this.deckBuilder);
+        this.roundNo = 1;
         this.startRound();
     }
-    playerHit() { }
-    playerStand() { }
-    playerBet() { }
-    startRound() {
+    getRoundNo() {
+        return this.roundNo;
+    }
+    async startRound() {
+        // user turn
+        // ask to enter bet first
+        await this.userEvents.askBet();
+        // distribute cards
         this.deckBuilder.distributeCards([this.user, this.dealer]);
         this.tableUIHandler.displayCards([this.user, this.dealer], true);
+        // ask for actions
+        await this.userEvents.askAction();
+        // verify if bust
+        if (this.computeTotalPts(this.user) > 21)
+            console.log('bust. total is ' + this.computeTotalPts(this.user));
+        else
+            console.log('safe. total is ' + this.computeTotalPts(this.user));
+        // dealer turn
+    }
+    computeTotalPts(player) {
+        let sum = 0;
+        player.getCards().forEach((card) => {
+            const rank = card.getRank();
+            if (rank == 14) {
+                if (sum + 11 > 21)
+                    sum += 1;
+                else
+                    sum += 11;
+            }
+            else if (rank > 10) {
+                sum += 10;
+            }
+            else {
+                sum += rank;
+            }
+        });
+        return sum;
     }
 }
+// get bet
+// do hit or stand
 new Game();

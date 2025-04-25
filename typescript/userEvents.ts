@@ -1,8 +1,10 @@
 import Config from './Config.js';
-import Game from './Game.js';
+import DeckBuilder from './DeckBuilder.js';
+import StatusUIHandler from './StatusUIHandler.js';
+import User from './User.js';
 
 export default class UserEvents {
-  // inputs
+  // inputs events
   private betInput: HTMLInputElement;
 
   // button events
@@ -10,26 +12,47 @@ export default class UserEvents {
   private standBtn: HTMLButtonElement;
   private betBtn: HTMLButtonElement;
 
-  private game: Game;
+  private user: User;
+  private statusUIHandler: StatusUIHandler;
+  public deckBuilder: DeckBuilder;
 
-  constructor(game: Game, config: Config) {
+  constructor(
+    config: Config,
+    user: User,
+    statusUIHandler: StatusUIHandler,
+    deckBuilder: DeckBuilder
+  ) {
     this.hitBtn = document.querySelector('.hit') as HTMLButtonElement;
+    this.hitBtn.disabled = true;
     this.standBtn = document.querySelector('.stand') as HTMLButtonElement;
+    this.standBtn.disabled = true;
     this.betBtn = document.querySelector('.submit-bet') as HTMLButtonElement;
 
     this.betInput = document.querySelector('#bet') as HTMLInputElement;
     this.betInput.defaultValue = config.getMinBet() + '';
-    this.game = game;
 
-    this.buttonEvents();
+    this.user = user;
+    this.statusUIHandler = statusUIHandler;
+    this.deckBuilder = deckBuilder;
   }
 
-  private buttonEvents() {
-    this.hitBtn.addEventListener('click', this.game.playerHit);
-    this.standBtn.addEventListener('click', this.game.playerStand);
-    this.betBtn.addEventListener('click', this.game.playerBet);
+  public askAction(): Promise<void> {
+    return new Promise((resolve) => {
+      this.hitBtn.addEventListener('click', () =>
+        this.deckBuilder.addCard(this.user)
+      );
+      this.standBtn.addEventListener('click', () => resolve());
+    });
+  }
 
-    this.betInput.addEventListener('input', () => this.betValidator());
+  public askBet(): Promise<void> {
+    return new Promise((resolve) => {
+      this.betInput.addEventListener('input', () => this.betValidator());
+      this.betBtn.addEventListener('click', () => {
+        this.setUserBet();
+        resolve();
+      });
+    });
   }
 
   private betValidator() {
@@ -45,5 +68,13 @@ export default class UserEvents {
       this.betInput.classList.add('wrong-input');
       this.betBtn.disabled = true;
     }
+  }
+
+  public setUserBet() {
+    this.user.setMoney(this.user.getMoney() - Number(this.betInput.value));
+    this.statusUIHandler.updateUserMoney();
+    this.betBtn.disabled = true;
+    this.hitBtn.disabled = false;
+    this.standBtn.disabled = false;
   }
 }

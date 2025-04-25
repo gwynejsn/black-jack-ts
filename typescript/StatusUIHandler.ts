@@ -1,25 +1,32 @@
-import Config from './Config';
+import Game from './Game';
+import User from './User';
 
 export default class StatusUIHandler {
   private roundNo: HTMLHeadingElement;
   private playerMoney: HTMLHeadingElement;
 
-  constructor(config: Config) {
+  private user: User;
+  private game: Game;
+
+  constructor(user: User, game: Game) {
     this.roundNo = document.querySelector('#round-no') as HTMLHeadingElement;
     this.playerMoney = document.querySelector(
       '#player-money'
     ) as HTMLHeadingElement;
+    this.game = game;
+
+    this.user = user;
 
     // initialize round and money
-    this.changeRoundNo(1);
-    this.changePlayerMoney(config.getStartingMoney());
+    this.updateRoundNo();
+    this.updateUserMoney();
   }
 
-  public changeRoundNo(roundNo: number) {
-    this.roundNo.innerText = 'Round ' + roundNo;
+  public updateRoundNo() {
+    this.roundNo.innerText = 'Round ' + this.game.getRoundNo();
   }
 
-  public changePlayerMoney(playerMoney: number) {
-    this.playerMoney.innerText = '$' + playerMoney;
+  public updateUserMoney() {
+    this.playerMoney.innerText = '$' + this.user.getMoney();
   }
 }

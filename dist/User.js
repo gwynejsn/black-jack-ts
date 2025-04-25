@@ -1,10 +1,13 @@
 import Player from './Player.js';
 export default class User extends Player {
-    constructor() {
+    constructor(config) {
         super();
-        this.money = 150;
+        this.money = config.getStartingMoney();
     }
     getMoney() {
         return this.money;
+    }
+    setMoney(money) {
+        this.money = money;
     }
 }
