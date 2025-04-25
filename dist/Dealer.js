@@ -1,4 +1,5 @@
 import Player from './Player.js';
+import Utility from './Utility.js';
 export default class Dealer extends Player {
     constructor() {
         super();
@@ -11,5 +12,19 @@ export default class Dealer extends Player {
     }
     getMoleCard() {
         return this.moleCard;
+    }
+    askAction(deckBuilder) {
+        return new Promise((resolve) => {
+            while (true) {
+                if (!this.shouldDealerHit())
+                    break;
+                deckBuilder.addCard(this);
+            }
+            resolve();
+        });
+    }
+    shouldDealerHit() {
+        const currPts = Utility.computeTotalPts(this);
+        return currPts < 17;
     }
 }

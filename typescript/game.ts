@@ -1,11 +1,11 @@
 import Config from './Config.js';
 import Dealer from './Dealer.js';
 import DeckBuilder from './DeckBuilder.js';
-import Player from './Player.js';
 import StatusUIHandler from './StatusUIHandler.js';
 import TableUIHandler from './TableUIHandler.js';
 import User from './User.js';
 import UserEvents from './UserEvents.js';
+import Utility from './Utility.js';
 
 export default class Game {
   private userEvents: UserEvents;
@@ -56,27 +56,15 @@ export default class Game {
     await this.userEvents.askAction();
 
     // verify if bust
-    if (this.computeTotalPts(this.user) > 21)
-      console.log('bust. total is ' + this.computeTotalPts(this.user));
-    else console.log('safe. total is ' + this.computeTotalPts(this.user));
+    if (Utility.computeTotalPts(this.user) > 21)
+      console.log('bust. total is ' + Utility.computeTotalPts(this.user));
+    else console.log('safe. total is ' + Utility.computeTotalPts(this.user));
 
     // dealer turn
-  }
-
-  private computeTotalPts(player: Player) {
-    let sum = 0;
-    player.getCards().forEach((card) => {
-      const rank = card.getRank();
-      if (rank == 14) {
-        if (sum + 11 > 21) sum += 1;
-        else sum += 11;
-      } else if (rank > 10) {
-        sum += 10;
-      } else {
-        sum += rank;
-      }
-    });
-    return sum;
+    console.log('dealer turn.');
+    await this.dealer.askAction(this.deckBuilder);
+    console.log('computer sum: ' + Utility.computeTotalPts(this.dealer));
+    console.log(this.dealer.getMoleCard());
   }
 }
 
