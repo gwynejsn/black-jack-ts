@@ -1,5 +1,5 @@
-@import url(black-jack-ts/styles/general.css);
-@import url(black-jack-ts/styles/components.css);
+@import url(/styles/general.css);
+@import url(/styles/components.css);
 
 h2 {
   font-size: 1.2rem;

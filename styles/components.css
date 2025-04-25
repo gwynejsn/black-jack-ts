@@ -1,4 +1,4 @@
-@import url(black-jack-ts/styles/general.css);
+@import url(/styles/general.css);
 
 .btn {
   background-image: radial-gradient(
@@ -45,4 +45,13 @@ button.btn:disabled {
   min-width: 5rem;
   min-height: 3rem;
   border-radius: calc(5rem / 2);
+}
+
+.card {
+  width: 5rem;
+}
+
+.card img {
+  width: 100%;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }

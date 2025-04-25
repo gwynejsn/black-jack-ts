@@ -4,4 +4,8 @@ export default class Player {
   constructor() {
     this.money = 150;
   }
+
+  public getMoney() {
+    return this.money;
+  }
 }
