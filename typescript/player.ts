@@ -1,11 +1,17 @@
+import Card from './Card.js';
+
 export default class Player {
-  private money: number;
+  private cards: Card[];
 
   constructor() {
-    this.money = 150;
+    this.cards = [];
   }
 
-  public getMoney() {
-    return this.money;
+  public getCards() {
+    return this.cards;
+  }
+
+  public addCard(card: Card) {
+    this.cards.push(card);
   }
 }

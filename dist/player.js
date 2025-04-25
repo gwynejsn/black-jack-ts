@@ -1,8 +1,11 @@
 export default class Player {
     constructor() {
-        this.money = 150;
+        this.cards = [];
     }
-    getMoney() {
-        return this.money;
+    getCards() {
+        return this.cards;
+    }
+    addCard(card) {
+        this.cards.push(card);
     }
 }

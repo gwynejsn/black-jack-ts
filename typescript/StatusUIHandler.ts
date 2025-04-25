@@ -1,18 +1,14 @@
-import Config from './config.js';
+import Config from './Config';
 
-export default class UIHandler {
-  // status ui
+export default class StatusUIHandler {
   private roundNo: HTMLHeadingElement;
   private playerMoney: HTMLHeadingElement;
-
-  private config: Config;
 
   constructor(config: Config) {
     this.roundNo = document.querySelector('#round-no') as HTMLHeadingElement;
     this.playerMoney = document.querySelector(
       '#player-money'
     ) as HTMLHeadingElement;
-    this.config = config;
 
     // initialize round and money
     this.changeRoundNo(1);

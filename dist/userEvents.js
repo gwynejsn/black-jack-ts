@@ -1,10 +1,10 @@
 export default class UserEvents {
-    constructor(game) {
+    constructor(game, config) {
         this.hitBtn = document.querySelector('.hit');
         this.standBtn = document.querySelector('.stand');
         this.betBtn = document.querySelector('.submit-bet');
         this.betInput = document.querySelector('#bet');
-        this.betInput.defaultValue = game.getConfig().getMinBet() + '';
+        this.betInput.defaultValue = config.getMinBet() + '';
         this.game = game;
         this.buttonEvents();
     }

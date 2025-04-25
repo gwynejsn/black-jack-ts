@@ -33,12 +33,18 @@ h2 {
   color: var(--off-white);
 }
 
+.player,
+.dealer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
 .player {
   width: 50%;
   height: 100%;
   border-right: 10px solid var(--primary-base);
-  display: flex;
-  justify-content: center;
   padding: 2rem;
 }
 
@@ -46,8 +52,13 @@ h2 {
   width: 50%;
   height: 100%;
   display: flex;
-  justify-content: center;
   padding: 2rem;
+}
+
+.player-cards,
+.dealer-cards {
+  display: flex;
+  gap: 2rem;
 }
 
 .actions {

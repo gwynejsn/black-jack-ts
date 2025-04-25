@@ -1,4 +1,5 @@
-import Game from './game';
+import Config from './Config.js';
+import Game from './Game.js';
 
 export default class UserEvents {
   // inputs
@@ -11,13 +12,13 @@ export default class UserEvents {
 
   private game: Game;
 
-  constructor(game: Game) {
+  constructor(game: Game, config: Config) {
     this.hitBtn = document.querySelector('.hit') as HTMLButtonElement;
     this.standBtn = document.querySelector('.stand') as HTMLButtonElement;
     this.betBtn = document.querySelector('.submit-bet') as HTMLButtonElement;
 
     this.betInput = document.querySelector('#bet') as HTMLInputElement;
-    this.betInput.defaultValue = game.getConfig().getMinBet() + '';
+    this.betInput.defaultValue = config.getMinBet() + '';
     this.game = game;
 
     this.buttonEvents();

@@ -1,20 +1,16 @@
-import Card from './card.js';
+import Card from './Card.js';
 export default class DeckBuilder {
-    constructor() {
-        this.suits = ['H', 'D', 'S', 'C'];
-        this.ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11];
+    constructor(config) {
         this.uniqueChecker = new Set();
-        console.log('deck builder');
-        this.userSide = document.querySelector('.player');
-        this.userSide.appendChild(this.cardUIBuilder());
+        this.suits = ['H', 'D', 'S', 'C'];
+        this.ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; // 11 = J, 12 = K, 13 = Q, 14 = A
+        this.config = config;
     }
-    cardUIBuilder() {
-        const cardUI = document.createElement('div');
-        const cardImg = document.createElement('img');
-        cardImg.src = this.generateCard().getFileName();
-        cardUI.classList.add('card');
-        cardUI.appendChild(cardImg);
-        return cardUI;
+    distributeCards(players) {
+        players.forEach((player) => {
+            for (let i = 0; i < this.config.getStartingNoOfCards(); i++)
+                player.addCard(this.generateCard());
+        });
     }
     generateCard() {
         let randomCard;

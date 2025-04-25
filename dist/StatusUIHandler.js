@@ -1,8 +1,7 @@
-export default class UIHandler {
+export default class StatusUIHandler {
     constructor(config) {
         this.roundNo = document.querySelector('#round-no');
         this.playerMoney = document.querySelector('#player-money');
-        this.config = config;
         // initialize round and money
         this.changeRoundNo(1);
         this.changePlayerMoney(config.getStartingMoney());
