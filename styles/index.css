@@ -71,3 +71,7 @@ h2 {
   width: 7rem;
   padding-left: 1rem;
 }
+
+.bet.wrong-input {
+  border: 2px solid var(--secondary-base);
+}

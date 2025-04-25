@@ -18,6 +18,13 @@
   opacity: 80%;
 }
 
+button.btn:disabled {
+  background-color: gray; /* Gray background when disabled */
+  color: lightgray; /* Light gray text */
+  cursor: not-allowed; /* Change cursor to show it's not clickable */
+  opacity: 0.5; /* Optionally make it semi-transparent */
+}
+
 .label {
   font-size: 1.5rem;
 }
