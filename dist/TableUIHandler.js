@@ -14,13 +14,19 @@ export default class TableUIHandler {
         cardUI.appendChild(cardImg);
         return cardUI;
     }
-    displayCards(players) {
+    displayCards(players, hideMoleCard) {
         players.forEach((player) => {
             const playerCards = player.getCards();
             if (player instanceof User)
                 playerCards.forEach((card) => this.userSide.appendChild(this.cardUIBuilder(card.getFileName())));
             else if (player instanceof Dealer)
-                playerCards.forEach((card) => this.dealerSide.appendChild(this.cardUIBuilder(card.getFileName())));
+                playerCards.forEach((card) => {
+                    const moleCard = player.getMoleCard();
+                    if (card.getFileName() == (moleCard === null || moleCard === void 0 ? void 0 : moleCard.getFileName()) && hideMoleCard)
+                        this.dealerSide.appendChild(this.cardUIBuilder('/resources/cards/BACK.png'));
+                    else
+                        this.dealerSide.appendChild(this.cardUIBuilder(card.getFileName()));
+                });
         });
     }
 }

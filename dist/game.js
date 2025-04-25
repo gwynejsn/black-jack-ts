@@ -22,7 +22,7 @@ export default class Game {
     playerBet() { }
     startRound() {
         this.deckBuilder.distributeCards([this.user, this.dealer]);
-        this.tableUIHandler.displayCards([this.user, this.dealer]);
+        this.tableUIHandler.displayCards([this.user, this.dealer], true);
     }
 }
 new Game();

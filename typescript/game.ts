@@ -35,7 +35,7 @@ export default class Game {
 
   private startRound() {
     this.deckBuilder.distributeCards([this.user, this.dealer]);
-    this.tableUIHandler.displayCards([this.user, this.dealer]);
+    this.tableUIHandler.displayCards([this.user, this.dealer], true);
   }
 }
 

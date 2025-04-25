@@ -24,7 +24,7 @@ export default class TableUIHandler {
     return cardUI;
   }
 
-  public displayCards(players: Player[]) {
+  public displayCards(players: Player[], hideMoleCard: boolean) {
     players.forEach((player) => {
       const playerCards = player.getCards();
       if (player instanceof User)
@@ -32,9 +32,15 @@ export default class TableUIHandler {
           this.userSide.appendChild(this.cardUIBuilder(card.getFileName()))
         );
       else if (player instanceof Dealer)
-        playerCards.forEach((card) =>
-          this.dealerSide.appendChild(this.cardUIBuilder(card.getFileName()))
-        );
+        playerCards.forEach((card) => {
+          const moleCard = player.getMoleCard();
+          if (card.getFileName() == moleCard?.getFileName() && hideMoleCard)
+            this.dealerSide.appendChild(
+              this.cardUIBuilder('/resources/cards/BACK.png')
+            );
+          else
+            this.dealerSide.appendChild(this.cardUIBuilder(card.getFileName()));
+        });
     });
   }
 }
