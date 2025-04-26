@@ -20,6 +20,12 @@ export default class DeckBuilder {
     this.tableUIHandler = tableUIHandler;
   }
 
+  public cleanDeck(players: Player[]) {
+    this.uniqueChecker.clear();
+    this.tableUIHandler.removeCards();
+    players.forEach((player) => player.removeAllCards());
+  }
+
   public distributeCards(players: Player[]) {
     players.forEach((player) => {
       for (let i = 0; i < this.config.getStartingNoOfCards(); i++)

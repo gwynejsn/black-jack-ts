@@ -24,6 +24,11 @@ export default class TableUIHandler {
     return cardUI;
   }
 
+  public removeCards() {
+    this.userSide.innerHTML = '';
+    this.dealerSide.innerHTML = '';
+  }
+
   public displayCards(players: Player[], hideMoleCard: boolean = true) {
     players.forEach((player) => {
       const playerCards = player.getCards();

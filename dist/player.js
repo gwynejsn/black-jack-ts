@@ -8,4 +8,7 @@ export default class Player {
     addCard(card) {
         this.cards.push(card);
     }
+    removeAllCards() {
+        this.cards = [];
+    }
 }

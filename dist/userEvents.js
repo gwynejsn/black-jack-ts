@@ -1,9 +1,8 @@
 export default class UserEvents {
     constructor(config, user, statusUIHandler, deckBuilder) {
         this.hitBtn = document.querySelector('.hit');
-        this.hitBtn.disabled = true;
         this.standBtn = document.querySelector('.stand');
-        this.standBtn.disabled = true;
+        this.disableActionBtns(true); // disable hit and stand in first start
         this.betBtn = document.querySelector('.submit-bet');
         this.betInput = document.querySelector('#bet');
         this.betInput.defaultValue = config.getMinBet() + '';
@@ -19,6 +18,9 @@ export default class UserEvents {
     }
     askBet() {
         return new Promise((resolve) => {
+            this.disableBetInput(false);
+            this.disableBetBtn(false);
+            this.disableActionBtns(true); // disable hit and stand
             this.betInput.addEventListener('input', () => this.betValidator());
             this.betBtn.addEventListener('click', () => {
                 this.setUserBet();
@@ -34,19 +36,29 @@ export default class UserEvents {
             if (bet <= 0 || isNaN(bet))
                 throw 'wrong input.';
             this.betInput.classList.remove('wrong-input');
-            this.betBtn.disabled = false;
+            this.disableBetBtn(false);
         }
         catch (err) {
             console.log(err);
             this.betInput.classList.add('wrong-input');
-            this.betBtn.disabled = true;
+            this.disableBetBtn(true);
         }
     }
     setUserBet() {
         this.user.setMoney(this.user.getMoney() - Number(this.betInput.value));
         this.statusUIHandler.updateUserMoney();
-        this.betBtn.disabled = true;
-        this.hitBtn.disabled = false;
-        this.standBtn.disabled = false;
+        this.disableBetInput(true);
+        this.disableBetBtn(true);
+        this.disableActionBtns(false);
+    }
+    disableActionBtns(to) {
+        this.hitBtn.disabled = to;
+        this.standBtn.disabled = to;
+    }
+    disableBetBtn(to) {
+        this.betBtn.disabled = to;
+    }
+    disableBetInput(to) {
+        this.betInput.disabled = to;
     }
 }

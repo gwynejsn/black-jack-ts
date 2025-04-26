@@ -14,4 +14,8 @@ export default class Player {
   public addCard(card: Card) {
     this.cards.push(card);
   }
+
+  public removeAllCards() {
+    this.cards = [];
+  }
 }

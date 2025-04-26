@@ -17,13 +17,11 @@ export default class StatusUIHandler {
 
     this.user = user;
 
-    // initialize round and money
-    this.updateRoundNo();
     this.updateUserMoney();
   }
 
-  public updateRoundNo() {
-    this.roundNo.innerText = 'Round ' + this.game.getRoundNo();
+  public updateRoundNo(roundNo: number) {
+    this.roundNo.innerText = 'Round ' + roundNo;
   }
 
   public updateUserMoney() {

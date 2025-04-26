@@ -7,6 +7,11 @@ export default class DeckBuilder {
         this.config = config;
         this.tableUIHandler = tableUIHandler;
     }
+    cleanDeck(players) {
+        this.uniqueChecker.clear();
+        this.tableUIHandler.removeCards();
+        players.forEach((player) => player.removeAllCards());
+    }
     distributeCards(players) {
         players.forEach((player) => {
             for (let i = 0; i < this.config.getStartingNoOfCards(); i++)

@@ -1,11 +1,13 @@
 import Config from './Config.js';
 import Dealer from './Dealer.js';
 import DeckBuilder from './DeckBuilder.js';
+import Player from './Player.js';
 import StatusUIHandler from './StatusUIHandler.js';
 import TableUIHandler from './TableUIHandler.js';
 import User from './User.js';
 import UserEvents from './UserEvents.js';
 import Utility from './Utility.js';
+import WinnerUIHandler from './WinnerUIHandler.js';
 
 export default class Game {
   private userEvents: UserEvents;
@@ -13,11 +15,10 @@ export default class Game {
   private tableUIHandler: TableUIHandler;
   private config: Config;
   private deckBuilder: DeckBuilder;
+  private winnerUIHandler: WinnerUIHandler;
 
   private user: User;
   private dealer: Dealer;
-
-  private roundNo: number;
 
   constructor() {
     console.log('initializing game...');
@@ -27,6 +28,7 @@ export default class Game {
     this.statusUIHandler = new StatusUIHandler(this.user, this);
     this.tableUIHandler = new TableUIHandler(this.config);
     this.deckBuilder = new DeckBuilder(this.config, this.tableUIHandler);
+    this.winnerUIHandler = new WinnerUIHandler();
     this.userEvents = new UserEvents(
       this.config,
       this.user,
@@ -34,41 +36,79 @@ export default class Game {
       this.deckBuilder
     );
 
-    this.roundNo = 1;
-
-    this.startRound();
+    this.init();
   }
 
-  public getRoundNo() {
-    return this.roundNo;
+  private async init() {
+    let roundNo = 0;
+    while (this.user.getMoney() >= this.config.getMinBet()) {
+      roundNo++;
+      this.statusUIHandler.updateRoundNo(roundNo);
+      const winner = await this.startRound();
+      await this.winnerUIHandler.displayWinner(winner);
+    }
   }
 
-  public async startRound() {
+  public async startRound(): Promise<Player> {
+    const players = [this.user, this.dealer];
+    this.deckBuilder.cleanDeck(players); // start with a clean deck
     // user turn
     // ask to enter bet first
     await this.userEvents.askBet();
 
     // distribute cards
-    this.deckBuilder.distributeCards([this.user, this.dealer]);
-    this.tableUIHandler.displayCards([this.user, this.dealer], true);
+    this.deckBuilder.distributeCards(players);
+    this.tableUIHandler.displayCards(players, true);
 
     // ask for actions
     await this.userEvents.askAction();
 
-    // verify if bust
-    if (Utility.computeTotalPts(this.user) > 21)
-      console.log('bust. total is ' + Utility.computeTotalPts(this.user));
-    else console.log('safe. total is ' + Utility.computeTotalPts(this.user));
+    // verify if bust, dealer wins
+    if (this.isBust(this.user)) return this.dealer;
 
     // dealer turn
-    console.log('dealer turn.');
     await this.dealer.askAction(this.deckBuilder);
-    console.log('computer sum: ' + Utility.computeTotalPts(this.dealer));
     console.log(this.dealer.getMoleCard());
+
+    // verify if bust, user wins
+    if (this.isBust(this.user)) return this.user;
+
+    // evaluate winner
+    return this.getWinner(players)!;
+  }
+
+  private isBust(player: Player) {
+    if (Utility.computeTotalPts(player) > 21) return true;
+    else return false;
+  }
+
+  private getWinner(players: Player[]): Player | null {
+    let winner: Player | null = null;
+    let isDraw = false;
+
+    players.forEach((player) => {
+      const currentPts = Utility.computeTotalPts(player);
+
+      if (!winner) {
+        winner = player;
+        isDraw = false;
+        return;
+      }
+
+      const bestPts = Utility.computeTotalPts(winner);
+
+      if (currentPts > bestPts) {
+        winner = player;
+        isDraw = false;
+      } else if (currentPts === bestPts) {
+        winner = null;
+        isDraw = true;
+      }
+      // if currentPts < bestPts, do nothing
+    });
+
+    return winner;
   }
 }
-
-// get bet
-// do hit or stand
 
 new Game();
