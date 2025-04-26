@@ -1,3 +1,4 @@
+import { ComponentBuilder as CB } from './ComponentBuilder.js';
 import Dealer from './Dealer.js';
 import Player from './Player.js';
 import User from './User.js';
@@ -14,23 +15,14 @@ export default class WinnerUIHandler {
 
     // pre-make the UI
     // pop up box container
-    this.popUpBox = document.createElement('div');
-    this.popUpBox.classList.add('pop-up-box');
-    this.popUpBox.classList.add('win-lose-div');
+    this.popUpBox = CB.containerBuilder(['pop-up-box', 'win-lose-div']);
 
     // buttons
-    this.continueBtn = document.createElement('button');
-    this.restartBtn = document.createElement('button');
-    this.continueBtn.textContent = 'continue';
-    this.continueBtn.classList.add('btn');
-    this.continueBtn.classList.add('continue-btn');
-    this.restartBtn.textContent = 'restart game';
-    this.restartBtn.classList.add('btn');
-    this.restartBtn.classList.add('restart-btn');
+    this.continueBtn = CB.buttonBuilder('continue', ['continue-btn']);
+    this.restartBtn = CB.buttonBuilder('restart', ['restart-btn']);
 
     // div of buttons
-    this.btnDiv = document.createElement('div');
-    this.btnDiv.classList.add('winner-btns');
+    this.btnDiv = CB.containerBuilder(['winner-btns']);
   }
 
   public async displayWinner(player: Player | null): Promise<void> {

@@ -1,6 +1,7 @@
 import Config from './Config.js';
 import Dealer from './Dealer.js';
 import DeckBuilder from './DeckBuilder.js';
+import MenuUIHandler from './MenuUIHandler.js';
 import StatusUIHandler from './StatusUIHandler.js';
 import TableUIHandler from './TableUIHandler.js';
 import User from './User.js';
@@ -11,16 +12,21 @@ export default class Game {
     constructor() {
         console.log('initializing game...');
         this.config = new Config();
+        this.menuUIHandler = new MenuUIHandler(this.config);
         this.user = new User(this.config);
         this.dealer = new Dealer();
         this.statusUIHandler = new StatusUIHandler(this.user, this);
-        this.tableUIHandler = new TableUIHandler(this.config);
+        this.tableUIHandler = new TableUIHandler();
         this.deckBuilder = new DeckBuilder(this.config, this.tableUIHandler);
         this.winnerUIHandler = new WinnerUIHandler();
         this.userEvents = new UserEvents(this.config, this.user, this.statusUIHandler, this.deckBuilder);
         this.init();
     }
     async init() {
+        await this.menuUIHandler.initializeMainMenu();
+        this.user.setMoney(this.config.getStartingMoney());
+        this.statusUIHandler.updateUserMoney(); // update based on config
+        this.userEvents.updateBetInputPlaceholder(this.config);
         let roundNo = 0;
         while (this.user.getMoney() >= this.config.getMinBet()) {
             roundNo++;

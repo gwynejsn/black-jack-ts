@@ -1,24 +1,21 @@
+import { ComponentBuilder as CB } from './ComponentBuilder.js';
 import Dealer from './Dealer.js';
 import User from './User.js';
 export default class TableUIHandler {
-    constructor(config) {
+    constructor() {
         this.userSide = document.querySelector('.player-cards');
         this.dealerSide = document.querySelector('.dealer-cards');
-        this.config = config;
     }
     cardUIBuilder(cardImgSrc) {
-        const cardUI = document.createElement('div');
-        const cardImg = document.createElement('img');
-        cardImg.src = cardImgSrc;
-        cardUI.classList.add('card');
-        cardUI.appendChild(cardImg);
-        return cardUI;
+        const cardImg = CB.imageBuilder(cardImgSrc);
+        return CB.containerBuilder(['card'], cardImg);
     }
     removeCards() {
         this.userSide.innerHTML = '';
         this.dealerSide.innerHTML = '';
     }
     displayCards(players, hideMoleCard = true) {
+        console.log('displaying cards');
         players.forEach((player) => {
             const playerCards = player.getCards();
             if (player instanceof User)

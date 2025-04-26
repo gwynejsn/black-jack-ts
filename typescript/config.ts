@@ -20,4 +20,15 @@ export default class Config {
   public getStartingNoOfCards() {
     return this.startingNoOfCards;
   }
+
+  public setConfig(
+    startingMoney: number = 150,
+    minBet: number = 10,
+    startingNoOfCards: number = 2
+  ) {
+    console.log('setting up: ' + startingMoney, +' ' + minBet);
+    this.startingMoney = startingMoney;
+    this.minBet = minBet;
+    this.startingNoOfCards = startingNoOfCards;
+  }
 }

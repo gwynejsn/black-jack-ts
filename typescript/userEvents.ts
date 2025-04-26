@@ -28,19 +28,36 @@ export default class UserEvents {
 
     this.betBtn = document.querySelector('.submit-bet') as HTMLButtonElement;
     this.betInput = document.querySelector('#bet') as HTMLInputElement;
-    this.betInput.defaultValue = config.getMinBet() + '';
+    this.updateBetInputPlaceholder(config);
 
     this.user = user;
     this.statusUIHandler = statusUIHandler;
     this.deckBuilder = deckBuilder;
   }
 
+  public updateBetInputPlaceholder(config: Config) {
+    this.betInput.defaultValue = config.getMinBet() + '';
+  }
+
+  private hitHandler = () => {};
+  private standHandler = () => {};
+
   public askAction(): Promise<void> {
     return new Promise((resolve) => {
-      this.hitBtn.addEventListener('click', () =>
-        this.deckBuilder.addCard(this.user)
-      );
-      this.standBtn.addEventListener('click', () => resolve());
+      // remove old listeners
+      this.hitBtn.removeEventListener('click', this.hitHandler);
+      this.standBtn.removeEventListener('click', this.standHandler);
+
+      // define new handlers
+      this.hitHandler = () => this.deckBuilder.addCard(this.user);
+
+      this.standHandler = () => resolve();
+
+      // add listeners
+      this.hitBtn.addEventListener('click', this.hitHandler);
+      this.standBtn.addEventListener('click', this.standHandler, {
+        once: true,
+      });
     });
   }
 
@@ -73,6 +90,7 @@ export default class UserEvents {
   }
 
   public setUserBet() {
+    this.user.setBet(Number(this.betInput.value));
     this.user.setMoney(this.user.getMoney() - Number(this.betInput.value));
     this.statusUIHandler.updateUserMoney();
     this.disableBetInput(true);
