@@ -73,17 +73,24 @@ export default class Game {
     // ask for actions
     await this.userEvents.askAction();
 
-    // verify if bust, dealer wins
-    if (this.isBust(this.user)) return this.dealer;
+    // verify if user is bust, dealer wins
+    if (this.isBust(this.user)) {
+      this.tableUIHandler.showMoleCard(this.dealer);
+      return this.dealer;
+    }
 
     // dealer turn
     await this.dealer.askAction(this.deckBuilder);
     console.log(this.dealer.getMoleCard());
 
-    // verify if bust, user wins
-    if (this.isBust(this.user)) return this.user;
+    // verify if dealer is bust, user wins
+    if (this.isBust(this.dealer)) {
+      this.tableUIHandler.showMoleCard(this.dealer);
+      return this.user;
+    }
 
     // evaluate winner
+    this.tableUIHandler.showMoleCard(this.dealer);
     return this.getWinner(players)!;
   }
 
@@ -93,6 +100,11 @@ export default class Game {
   }
 
   private getWinner(players: Player[]): Player | null {
+    console.log(
+      Utility.computeTotalPts(players[0]) +
+        ' vs ' +
+        Utility.computeTotalPts(players[1])
+    );
     let winner: Player | null = null;
     let isDraw = false;
 

@@ -12,8 +12,8 @@ export default class TableUIHandler {
     this.dealerSide = document.querySelector('.dealer-cards') as HTMLDivElement;
   }
 
-  private cardUIBuilder(cardImgSrc: string) {
-    const cardImg = CB.imageBuilder(cardImgSrc);
+  private cardUIBuilder(cardImgSrc: string, classToBeAdded: string[] = []) {
+    const cardImg = CB.imageBuilder(cardImgSrc, classToBeAdded);
     return CB.containerBuilder(['card'], cardImg);
   }
 
@@ -35,12 +35,17 @@ export default class TableUIHandler {
           const moleCard = player.getMoleCard();
           if (card.getFileName() == moleCard?.getFileName() && hideMoleCard)
             this.dealerSide.appendChild(
-              this.cardUIBuilder('/resources/cards/BACK.png')
+              this.cardUIBuilder('/resources/cards/BACK.png', ['mole-card'])
             );
           else
             this.dealerSide.appendChild(this.cardUIBuilder(card.getFileName()));
         });
     });
+  }
+
+  public showMoleCard(dealer: Dealer) {
+    const moleCard = document.querySelector('.mole-card') as HTMLImageElement;
+    moleCard.src = dealer.getMoleCard()?.getFileName()!;
   }
 
   public displayAddedCard(player: Player) {

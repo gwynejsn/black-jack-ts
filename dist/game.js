@@ -33,6 +33,8 @@ export default class Game {
             this.statusUIHandler.updateRoundNo(roundNo);
             const winner = await this.startRound();
             await this.winnerUIHandler.displayWinner(winner);
+            if (winner instanceof User)
+                this.user.setMoney(this.user.getMoney() + this.user.getBet() * 1.5);
         }
     }
     async startRound() {
@@ -46,16 +48,21 @@ export default class Game {
         this.tableUIHandler.displayCards(players, true);
         // ask for actions
         await this.userEvents.askAction();
-        // verify if bust, dealer wins
-        if (this.isBust(this.user))
+        // verify if user is bust, dealer wins
+        if (this.isBust(this.user)) {
+            this.tableUIHandler.showMoleCard(this.dealer);
             return this.dealer;
+        }
         // dealer turn
         await this.dealer.askAction(this.deckBuilder);
         console.log(this.dealer.getMoleCard());
-        // verify if bust, user wins
-        if (this.isBust(this.user))
+        // verify if dealer is bust, user wins
+        if (this.isBust(this.dealer)) {
+            this.tableUIHandler.showMoleCard(this.dealer);
             return this.user;
+        }
         // evaluate winner
+        this.tableUIHandler.showMoleCard(this.dealer);
         return this.getWinner(players);
     }
     isBust(player) {
@@ -65,6 +72,9 @@ export default class Game {
             return false;
     }
     getWinner(players) {
+        console.log(Utility.computeTotalPts(players[0]) +
+            ' vs ' +
+            Utility.computeTotalPts(players[1]));
         let winner = null;
         let isDraw = false;
         players.forEach((player) => {

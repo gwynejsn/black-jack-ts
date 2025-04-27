@@ -12,8 +12,9 @@ class ComponentBuilder {
         childToBeAppended.forEach((child) => container.appendChild(child));
         return container;
     }
-    static imageBuilder(src) {
+    static imageBuilder(src, classToBeAdded = []) {
         const image = document.createElement('img');
+        classToBeAdded.forEach((c) => image.classList.add(c));
         image.src = src;
         return image;
     }

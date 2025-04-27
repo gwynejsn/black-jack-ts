@@ -17,8 +17,9 @@ class ComponentBuilder {
     return container;
   }
 
-  static imageBuilder(src: string) {
+  static imageBuilder(src: string, classToBeAdded: string[] = []) {
     const image = document.createElement('img');
+    classToBeAdded.forEach((c) => image.classList.add(c));
     image.src = src;
     return image;
   }

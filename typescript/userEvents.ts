@@ -14,7 +14,8 @@ export default class UserEvents {
 
   private user: User;
   private statusUIHandler: StatusUIHandler;
-  public deckBuilder: DeckBuilder;
+  private deckBuilder: DeckBuilder;
+  private config: Config;
 
   constructor(
     config: Config,
@@ -33,6 +34,7 @@ export default class UserEvents {
     this.user = user;
     this.statusUIHandler = statusUIHandler;
     this.deckBuilder = deckBuilder;
+    this.config = config;
   }
 
   public updateBetInputPlaceholder(config: Config) {
@@ -78,7 +80,8 @@ export default class UserEvents {
     let bet: number;
     try {
       bet = Number(this.betInput.value);
-      console.log(typeof bet);
+      if (bet < this.config.getMinBet()) throw 'minimum bet not met.';
+      if (bet > this.user.getMoney()) throw 'not enough money.';
       if (bet <= 0 || isNaN(bet)) throw 'wrong input.';
       this.betInput.classList.remove('wrong-input');
       this.disableBetBtn(false);
