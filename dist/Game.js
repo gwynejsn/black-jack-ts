@@ -60,7 +60,6 @@ export default class Game {
         }
         // dealer turn
         await this.dealer.askAction(this.deckBuilder);
-        console.log(this.dealer.getMoleCard());
         // verify if dealer is bust, user wins
         if (this.isBust(this.dealer)) {
             this.tableUIHandler.revealMoleCard(this.dealer);
