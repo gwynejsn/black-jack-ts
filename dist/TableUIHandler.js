@@ -30,7 +30,7 @@ export default class TableUIHandler {
                     const moleCard = player.getMoleCard();
                     const isMole = moleCard && card.getFileName() === moleCard.getFileName();
                     if (isMole && hideMoleCard) {
-                        const moleElement = this.cardUIBuilder('/resources/cards/BACK.png', ['mole-card']);
+                        const moleElement = this.cardUIBuilder('resources/cards/BACK.png', ['mole-card']);
                         this.dealerSide.appendChild(moleElement);
                     }
                     else {
