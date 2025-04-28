@@ -4,18 +4,21 @@ import StatusUIHandler from './StatusUIHandler.js';
 import User from './User.js';
 
 export default class UserEvents {
-  // inputs events
+  // Inputs and button elements
   private betInput: HTMLInputElement;
-
-  // button events
   private hitBtn: HTMLButtonElement;
   private standBtn: HTMLButtonElement;
   private betBtn: HTMLButtonElement;
 
+  // Game-related properties
   private user: User;
   private statusUIHandler: StatusUIHandler;
   private deckBuilder: DeckBuilder;
   private config: Config;
+
+  // Stored resolve functions
+  private resolveBet?: () => void;
+  private resolveAction?: () => void;
 
   constructor(
     config: Config,
@@ -25,92 +28,127 @@ export default class UserEvents {
   ) {
     this.hitBtn = document.querySelector('.hit') as HTMLButtonElement;
     this.standBtn = document.querySelector('.stand') as HTMLButtonElement;
-    this.disableActionBtns(true); // disable hit and stand in first start
-
     this.betBtn = document.querySelector('.submit-bet') as HTMLButtonElement;
     this.betInput = document.querySelector('#bet') as HTMLInputElement;
-    this.updateBetInputPlaceholder(config);
 
     this.user = user;
     this.statusUIHandler = statusUIHandler;
     this.deckBuilder = deckBuilder;
     this.config = config;
+
+    this.initialize();
+
+    // Set up bet button only once
+    this.betBtn.addEventListener('click', this.onBetButtonClick);
   }
 
-  public updateBetInputPlaceholder(config: Config) {
-    this.betInput.defaultValue = config.getMinBet() + '';
+  private initialize() {
+    this.toggleActionBtns(true);
+    this.updateBetInputPlaceholder();
   }
 
-  private hitHandler = () => {};
-  private standHandler = () => {};
+  public updateBetInputPlaceholder() {
+    this.betInput.defaultValue = this.config.getMinBet().toString();
+  }
 
   public askAction(): Promise<void> {
     return new Promise((resolve) => {
-      // remove old listeners
-      this.hitBtn.removeEventListener('click', this.hitHandler);
-      this.standBtn.removeEventListener('click', this.standHandler);
+      this.cleanupActionListeners(); // Always clean first
+      this.resolveAction = resolve;
 
-      // define new handlers
-      this.hitHandler = () => this.deckBuilder.addCard(this.user);
+      this.hitHandler = this.handleHit.bind(this);
+      this.standHandler = this.handleStand.bind(this);
 
-      this.standHandler = () => resolve();
-
-      // add listeners
       this.hitBtn.addEventListener('click', this.hitHandler);
-      this.standBtn.addEventListener('click', this.standHandler, {
-        once: true,
-      });
+      this.standBtn.addEventListener('click', this.standHandler);
     });
   }
 
   public askBet(): Promise<void> {
     return new Promise((resolve) => {
-      this.disableBetInput(false);
-      this.disableBetBtn(false);
-      this.disableActionBtns(true); // disable hit and stand
-      this.betInput.addEventListener('input', () => this.betValidator());
-      this.betBtn.addEventListener('click', () => {
-        this.setUserBet();
-        resolve();
-      });
+      this.cleanupBetListeners(); // Always clean first
+      this.resolveBet = resolve;
+
+      this.toggleActionBtns(true);
+      this.toggleBetBtn(false);
+      this.toggleBetInput(false);
+
+      this.betInput.addEventListener('input', this.betValidator);
     });
   }
 
-  private betValidator() {
+  private handleHit() {
+    this.deckBuilder.addCard(this.user);
+  }
+
+  private handleStand() {
+    this.resolveAction?.();
+    this.cleanupActionListeners(); // Clean up after standing
+  }
+
+  private onBetButtonClick = () => {
+    if (this.betBtn.disabled) return; // prevent clicks when disabled
+    this.setUserBet();
+    this.resolveBet?.(); // manually resolve
+    this.cleanupBetListeners(); // clean bet listeners after bet is placed
+  };
+
+  private betValidator = () => {
     let bet: number;
     try {
       bet = Number(this.betInput.value);
-      if (bet < this.config.getMinBet()) throw 'minimum bet not met.';
-      if (bet > this.user.getMoney()) throw 'not enough money.';
-      if (bet <= 0 || isNaN(bet)) throw 'wrong input.';
+      if (bet < this.config.getMinBet())
+        throw new Error('Minimum bet not met.');
+      if (bet > this.user.getMoney()) throw new Error('Not enough money.');
+      if (bet <= 0 || isNaN(bet)) throw new Error('Invalid bet input.');
+
       this.betInput.classList.remove('wrong-input');
-      this.disableBetBtn(false);
+      this.toggleBetBtn(false);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       this.betInput.classList.add('wrong-input');
-      this.disableBetBtn(true);
+      this.toggleBetBtn(true);
     }
-  }
+  };
 
-  public setUserBet() {
-    this.user.setBet(Number(this.betInput.value));
-    this.user.setMoney(this.user.getMoney() - Number(this.betInput.value));
+  private setUserBet() {
+    const betAmount = Number(this.betInput.value);
+    this.user.setBet(betAmount);
+    console.log('curr money ' + this.user.getMoney());
+    const newMoney = this.user.getMoney() - betAmount;
+    this.user.setMoney(newMoney);
+    console.log('user mon ' + this.user.getMoney());
     this.statusUIHandler.updateUserMoney();
-    this.disableBetInput(true);
-    this.disableBetBtn(true);
-    this.disableActionBtns(false);
+    this.toggleActionBtns(false);
+    this.toggleBetInput(true);
+    this.toggleBetBtn(true);
   }
 
-  public disableActionBtns(to: boolean) {
-    this.hitBtn.disabled = to;
-    this.standBtn.disabled = to;
+  private toggleBetBtn(disable: boolean) {
+    this.betBtn.disabled = disable;
   }
 
-  public disableBetBtn(to: boolean) {
-    this.betBtn.disabled = to;
+  private toggleActionBtns(disable: boolean) {
+    this.hitBtn.disabled = disable;
+    this.standBtn.disabled = disable;
   }
 
-  public disableBetInput(to: boolean) {
-    this.betInput.disabled = to;
+  private toggleBetInput(disable: boolean) {
+    this.betInput.disabled = disable;
   }
+
+  // --- CLEANUP FUNCTIONS ---
+
+  private cleanupActionListeners() {
+    this.hitBtn.removeEventListener('click', this.hitHandler);
+    this.standBtn.removeEventListener('click', this.standHandler);
+  }
+
+  private cleanupBetListeners() {
+    this.betInput.removeEventListener('input', this.betValidator);
+  }
+
+  // Event handlers
+  private hitHandler = () => {};
+  private standHandler = () => {};
 }

@@ -22,7 +22,7 @@ export default class DeckBuilder {
 
   public cleanDeck(players: Player[]) {
     this.uniqueChecker.clear();
-    this.tableUIHandler.removeCards();
+    this.tableUIHandler.clearTable();
     players.forEach((player) => player.removeAllCards());
   }
 

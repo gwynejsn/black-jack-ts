@@ -10,37 +10,55 @@ export default class TableUIHandler {
         const cardImg = CB.imageBuilder(cardImgSrc, classToBeAdded);
         return CB.containerBuilder(['card'], cardImg);
     }
-    removeCards() {
+    clearTable() {
         this.userSide.innerHTML = '';
         this.dealerSide.innerHTML = '';
     }
     displayCards(players, hideMoleCard = true) {
-        console.log('displaying cards');
+        this.clearTable(); // Always start fresh
+        console.log('Displaying cards...');
         players.forEach((player) => {
-            const playerCards = player.getCards();
-            if (player instanceof User)
-                playerCards.forEach((card) => this.userSide.appendChild(this.cardUIBuilder(card.getFileName())));
-            else if (player instanceof Dealer)
-                playerCards.forEach((card) => {
-                    const moleCard = player.getMoleCard();
-                    if (card.getFileName() == (moleCard === null || moleCard === void 0 ? void 0 : moleCard.getFileName()) && hideMoleCard)
-                        this.dealerSide.appendChild(this.cardUIBuilder('/resources/cards/BACK.png', ['mole-card']));
-                    else
-                        this.dealerSide.appendChild(this.cardUIBuilder(card.getFileName()));
+            const cards = player.getCards();
+            if (player instanceof User) {
+                cards.forEach((card) => {
+                    const cardElement = this.cardUIBuilder(card.getFileName());
+                    this.userSide.appendChild(cardElement);
                 });
+            }
+            else if (player instanceof Dealer) {
+                cards.forEach((card) => {
+                    const moleCard = player.getMoleCard();
+                    const isMole = moleCard && card.getFileName() === moleCard.getFileName();
+                    if (isMole && hideMoleCard) {
+                        const moleElement = this.cardUIBuilder('/resources/cards/BACK.png', ['mole-card']);
+                        this.dealerSide.appendChild(moleElement);
+                    }
+                    else {
+                        const cardElement = this.cardUIBuilder(card.getFileName());
+                        this.dealerSide.appendChild(cardElement);
+                    }
+                });
+            }
         });
     }
-    showMoleCard(dealer) {
-        var _a;
-        const moleCard = document.querySelector('.mole-card');
-        moleCard.src = (_a = dealer.getMoleCard()) === null || _a === void 0 ? void 0 : _a.getFileName();
+    revealMoleCard(dealer) {
+        const moleCardElement = this.dealerSide.querySelector('.mole-card');
+        if (moleCardElement && dealer.getMoleCard()) {
+            moleCardElement.src = dealer.getMoleCard().getFileName();
+        }
+        else {
+            console.warn('No mole card found to reveal.');
+        }
     }
     displayAddedCard(player) {
-        const playerCards = player.getCards();
-        const lastCard = playerCards[playerCards.length - 1];
-        if (player instanceof User)
-            this.userSide.appendChild(this.cardUIBuilder(lastCard.getFileName()));
-        else if (player instanceof Dealer)
-            this.dealerSide.appendChild(this.cardUIBuilder(lastCard.getFileName()));
+        const cards = player.getCards();
+        const lastCard = cards[cards.length - 1];
+        const cardElement = this.cardUIBuilder(lastCard.getFileName());
+        if (player instanceof User) {
+            this.userSide.appendChild(cardElement);
+        }
+        else if (player instanceof Dealer) {
+            this.dealerSide.appendChild(cardElement);
+        }
     }
 }

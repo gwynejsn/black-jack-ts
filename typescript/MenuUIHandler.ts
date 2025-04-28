@@ -1,20 +1,34 @@
 import { ComponentBuilder as CB } from './ComponentBuilder.js';
 import Config from './Config.js';
+import StatusUIHandler from './StatusUIHandler.js';
+import User from './User.js';
+import UserEvents from './UserEvents.js';
+
 export default class MenuUIHandler {
   private htmlBody: HTMLBodyElement;
   private mainMenu: HTMLDivElement;
   private startGameBtn: HTMLButtonElement;
   private settingsBtn: HTMLButtonElement;
-
   private config: Config;
+  private user: User;
+  private statusUIHandler: StatusUIHandler;
+  private userEvents: UserEvents;
 
-  constructor(config: Config) {
+  constructor(
+    config: Config,
+    user: User,
+    statusUIHandler: StatusUIHandler,
+    userEvents: UserEvents
+  ) {
     this.htmlBody = document.body as HTMLBodyElement;
-    const { mainMenu, startGameBtn, settingsBtn } = this.mainMenuBuilder();
+    const { mainMenu, startGameBtn, settingsBtn } = this.createMainMenu();
     this.mainMenu = mainMenu;
     this.startGameBtn = startGameBtn;
     this.settingsBtn = settingsBtn;
     this.config = config;
+    this.user = user;
+    this.statusUIHandler = statusUIHandler;
+    this.userEvents = userEvents;
   }
 
   public initializeMainMenu(): Promise<void> {
@@ -22,18 +36,15 @@ export default class MenuUIHandler {
       this.toggleMainMenu(true);
 
       const startHandler = () => {
-        this.startGameBtn.removeEventListener('click', startHandler);
-        this.settingsBtn.removeEventListener('click', settingsHandler);
+        this.removeEventListeners(startHandler, settingsHandler);
         this.toggleMainMenu(false);
         resolve();
       };
 
       const settingsHandler = async () => {
-        this.startGameBtn.removeEventListener('click', startHandler);
-        this.settingsBtn.removeEventListener('click', settingsHandler);
-
-        await this.setupConfig(); // wait for settings to finish
-        this.initializeMainMenu().then(resolve); // after settings, re-show menu and resolve eventually
+        this.removeEventListeners(startHandler, settingsHandler);
+        await this.setupConfig();
+        this.initializeMainMenu().then(resolve);
       };
 
       this.startGameBtn.addEventListener('click', startHandler);
@@ -41,14 +52,21 @@ export default class MenuUIHandler {
     });
   }
 
+  private removeEventListeners(
+    startHandler: EventListener,
+    settingsHandler: EventListener
+  ) {
+    this.startGameBtn.removeEventListener('click', startHandler);
+    this.settingsBtn.removeEventListener('click', settingsHandler);
+  }
+
   private setupConfig(): Promise<void> {
     return new Promise((resolve) => {
-      this.mainMenu.appendChild(this.settingsBuilder());
+      this.mainMenu.appendChild(this.buildSettingsUI());
 
       document
         .querySelector('.settings-undo-btn')
         ?.addEventListener('click', () => {
-          console.log('undo pressed');
           this.reRenderMainMenu();
           resolve();
         });
@@ -56,48 +74,39 @@ export default class MenuUIHandler {
       document
         .querySelector('.settings-save-btn')
         ?.addEventListener('click', () => {
-          const startingMoneyInput = document.querySelector(
-            '.starting-money-input'
-          ) as HTMLInputElement;
-          const minBetInput = document.querySelector(
-            '.min-bet-input'
-          ) as HTMLInputElement;
-          const startingNoOfCardsInput = document.querySelector(
-            '.starting-no-of-cards-input'
-          ) as HTMLInputElement;
-
-          const startingMoney = startingMoneyInput.value
-            ? Number(startingMoneyInput.value)
-            : undefined;
-          const minBet = minBetInput.value
-            ? Number(minBetInput.value)
-            : undefined;
-          const startingNoOfCards = startingNoOfCardsInput.value
-            ? Number(startingNoOfCardsInput.value)
-            : undefined;
-
-          this.config.setConfig(startingMoney, minBet, startingNoOfCards);
-
+          this.saveSettings();
           this.reRenderMainMenu();
           resolve();
         });
     });
   }
 
-  private reRenderMainMenu() {
-    const mainMenuFound = document.querySelector('.main-menu');
-    if (mainMenuFound) {
-      // remove current
-      this.htmlBody.removeChild(mainMenuFound);
-      // re-render
-      const { mainMenu, startGameBtn, settingsBtn } = this.mainMenuBuilder();
-      this.mainMenu = mainMenu;
-      this.startGameBtn = startGameBtn;
-      this.settingsBtn = settingsBtn;
-    }
+  private saveSettings() {
+    const startingMoneyInput = document.querySelector(
+      '.starting-money-input'
+    ) as HTMLInputElement;
+    const minBetInput = document.querySelector(
+      '.min-bet-input'
+    ) as HTMLInputElement;
+    const startingNoOfCardsInput = document.querySelector(
+      '.starting-no-of-cards-input'
+    ) as HTMLInputElement;
+
+    const startingMoney = startingMoneyInput.value
+      ? Number(startingMoneyInput.value)
+      : undefined;
+    const minBet = minBetInput.value ? Number(minBetInput.value) : undefined;
+    const startingNoOfCards = startingNoOfCardsInput.value
+      ? Number(startingNoOfCardsInput.value)
+      : undefined;
+
+    this.config.setConfig(startingMoney, minBet, startingNoOfCards);
+    this.user.setMoney(this.config.getStartingMoney());
+    this.statusUIHandler.updateUserMoney(); // update based on config
+    this.userEvents.updateBetInputPlaceholder();
   }
 
-  private settingsBuilder() {
+  private buildSettingsUI() {
     this.mainMenu.removeChild(
       document.querySelector('.main-menu-btns') as HTMLDivElement
     );
@@ -121,20 +130,26 @@ export default class MenuUIHandler {
         '2',
         'settings-input-label'
       ),
-      CB.buttonBuilder('undo', ['settings-undo-btn']),
-      CB.buttonBuilder('save', ['settings-save-btn'])
+      CB.containerBuilder(
+        ['settings-btns-div'],
+        CB.buttonBuilder('undo', ['settings-undo-btn']),
+        CB.buttonBuilder('save', ['settings-save-btn'])
+      )
     );
   }
 
-  public toggleMainMenu(show: boolean) {
-    if (show) this.htmlBody.appendChild(this.mainMenu);
-    else
-      this.htmlBody.removeChild(
-        document.querySelector('.main-menu') as HTMLDivElement
-      );
+  private reRenderMainMenu() {
+    const mainMenuFound = document.querySelector('.main-menu');
+    if (mainMenuFound) {
+      this.htmlBody.removeChild(mainMenuFound);
+      const { mainMenu, startGameBtn, settingsBtn } = this.createMainMenu();
+      this.mainMenu = mainMenu;
+      this.startGameBtn = startGameBtn;
+      this.settingsBtn = settingsBtn;
+    }
   }
 
-  private mainMenuBuilder(): {
+  private createMainMenu(): {
     mainMenu: HTMLDivElement;
     startGameBtn: HTMLButtonElement;
     settingsBtn: HTMLButtonElement;
@@ -155,5 +170,15 @@ export default class MenuUIHandler {
     );
     const mainMenu = CB.containerBuilder(['main-menu'], titleDiv, btnsDiv);
     return { mainMenu, startGameBtn, settingsBtn };
+  }
+
+  public toggleMainMenu(show: boolean) {
+    if (show) {
+      this.htmlBody.appendChild(this.mainMenu);
+    } else {
+      this.htmlBody.removeChild(
+        document.querySelector('.main-menu') as HTMLDivElement
+      );
+    }
   }
 }

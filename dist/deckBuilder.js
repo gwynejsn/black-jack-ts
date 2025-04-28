@@ -9,7 +9,7 @@ export default class DeckBuilder {
     }
     cleanDeck(players) {
         this.uniqueChecker.clear();
-        this.tableUIHandler.removeCards();
+        this.tableUIHandler.clearTable();
         players.forEach((player) => player.removeAllCards());
     }
     distributeCards(players) {

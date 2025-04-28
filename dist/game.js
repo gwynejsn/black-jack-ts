@@ -10,9 +10,7 @@ import Utility from './Utility.js';
 import WinnerUIHandler from './WinnerUIHandler.js';
 export default class Game {
     constructor() {
-        console.log('initializing game...');
         this.config = new Config();
-        this.menuUIHandler = new MenuUIHandler(this.config);
         this.user = new User(this.config);
         this.dealer = new Dealer();
         this.statusUIHandler = new StatusUIHandler(this.user, this);
@@ -20,21 +18,25 @@ export default class Game {
         this.deckBuilder = new DeckBuilder(this.config, this.tableUIHandler);
         this.winnerUIHandler = new WinnerUIHandler();
         this.userEvents = new UserEvents(this.config, this.user, this.statusUIHandler, this.deckBuilder);
+        this.menuUIHandler = new MenuUIHandler(this.config, this.user, this.statusUIHandler, this.userEvents);
         this.init();
     }
     async init() {
-        await this.menuUIHandler.initializeMainMenu();
-        this.user.setMoney(this.config.getStartingMoney());
-        this.statusUIHandler.updateUserMoney(); // update based on config
-        this.userEvents.updateBetInputPlaceholder(this.config);
+        await this.menuUIHandler.initializeMainMenu(); // also asks for configurations
+        await this.startGame();
+    }
+    async startGame() {
         let roundNo = 0;
         while (this.user.getMoney() >= this.config.getMinBet()) {
             roundNo++;
             this.statusUIHandler.updateRoundNo(roundNo);
             const winner = await this.startRound();
-            await this.winnerUIHandler.displayWinner(winner);
-            if (winner instanceof User)
+            // add reward
+            if (winner instanceof User) {
                 this.user.setMoney(this.user.getMoney() + this.user.getBet() * 1.5);
+                this.statusUIHandler.updateUserMoney();
+            }
+            await this.winnerUIHandler.displayWinner(winner);
         }
     }
     async startRound() {
@@ -50,7 +52,7 @@ export default class Game {
         await this.userEvents.askAction();
         // verify if user is bust, dealer wins
         if (this.isBust(this.user)) {
-            this.tableUIHandler.showMoleCard(this.dealer);
+            this.tableUIHandler.revealMoleCard(this.dealer);
             return this.dealer;
         }
         // dealer turn
@@ -58,11 +60,11 @@ export default class Game {
         console.log(this.dealer.getMoleCard());
         // verify if dealer is bust, user wins
         if (this.isBust(this.dealer)) {
-            this.tableUIHandler.showMoleCard(this.dealer);
+            this.tableUIHandler.revealMoleCard(this.dealer);
             return this.user;
         }
         // evaluate winner
-        this.tableUIHandler.showMoleCard(this.dealer);
+        this.tableUIHandler.revealMoleCard(this.dealer);
         return this.getWinner(players);
     }
     isBust(player) {
