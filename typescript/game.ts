@@ -58,12 +58,15 @@ export default class Game {
       this.statusUIHandler.updateRoundNo(roundNo);
       const winner = await this.startRound();
       // add reward
-      if (winner instanceof User) {
+      if (winner instanceof User)
         this.user.setMoney(this.user.getMoney() + this.user.getBet() * 1.5);
-        this.statusUIHandler.updateUserMoney();
-      }
+      else if (winner == null)
+        // draw, return money
+        this.user.setMoney(this.user.getMoney() + this.user.getBet());
+      this.statusUIHandler.updateUserMoney();
       await this.winnerUIHandler.displayWinner(winner);
     }
+    this.menuUIHandler.askToRestart();
   }
 
   public async startRound(): Promise<Player> {
@@ -113,14 +116,12 @@ export default class Game {
         Utility.computeTotalPts(players[1])
     );
     let winner: Player | null = null;
-    let isDraw = false;
 
     players.forEach((player) => {
       const currentPts = Utility.computeTotalPts(player);
 
       if (!winner) {
         winner = player;
-        isDraw = false;
         return;
       }
 
@@ -128,10 +129,8 @@ export default class Game {
 
       if (currentPts > bestPts) {
         winner = player;
-        isDraw = false;
       } else if (currentPts === bestPts) {
         winner = null;
-        isDraw = true;
       }
       // if currentPts < bestPts, do nothing
     });

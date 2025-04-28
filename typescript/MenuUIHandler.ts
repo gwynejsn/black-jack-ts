@@ -13,6 +13,7 @@ export default class MenuUIHandler {
   private user: User;
   private statusUIHandler: StatusUIHandler;
   private userEvents: UserEvents;
+  private restartBtn: HTMLButtonElement;
 
   constructor(
     config: Config,
@@ -29,6 +30,7 @@ export default class MenuUIHandler {
     this.user = user;
     this.statusUIHandler = statusUIHandler;
     this.userEvents = userEvents;
+    this.restartBtn = CB.buttonBuilder('restart', ['restart-btn']);
   }
 
   public initializeMainMenu(): Promise<void> {
@@ -180,5 +182,20 @@ export default class MenuUIHandler {
         document.querySelector('.main-menu') as HTMLDivElement
       );
     }
+  }
+
+  public askToRestart() {
+    const popUpBox = CB.containerBuilder(
+      ['restart-pop-up-box', 'pop-up-box'],
+      CB.headerBuilder('Your ran out of money.', ['restart-heading'], 'h2'),
+      this.restartBtn
+    );
+
+    this.restartBtn.addEventListener('click', () => {
+      console.log('restart clicked');
+      window.location.reload();
+    });
+
+    this.htmlBody.appendChild(popUpBox);
   }
 }
