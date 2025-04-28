@@ -1,5 +1,5 @@
-import Game from './Game';
-import User from './User';
+import Game from './Game.js';
+import User from './User.js';
 
 export default class StatusUIHandler {
   private roundNo: HTMLHeadingElement;

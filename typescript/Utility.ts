@@ -1,4 +1,4 @@
-import Player from './Player';
+import Player from './Player.js';
 
 export default class Utility {
   static computeTotalPts(player: Player) {
