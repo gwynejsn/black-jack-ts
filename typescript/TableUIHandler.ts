@@ -42,7 +42,7 @@ export default class TableUIHandler {
 
           if (isMole && hideMoleCard) {
             const moleElement = this.cardUIBuilder(
-              '/resources/cards/BACK.png',
+              'resources/cards/BACK.png',
               ['mole-card']
             );
             this.dealerSide.appendChild(moleElement);
