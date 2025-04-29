@@ -6,3 +6,5 @@ A simple **Blackjack** game implemented using **HTML**, **CSS**, and **TypeScrip
 - A straightforward implementation of the classic Blackjack card game.
 - Built using modern web technologies: HTML, CSS, and TypeScript.
 - Designed for educational purposes to demonstrate game logic and frontend development.
+
+[Play BlackJack](https://gwynejsn.github.io/black-jack-ts/)
