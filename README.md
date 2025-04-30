@@ -1,7 +1,15 @@
-<body line-height: 1.6; max-width: 900px; margin: auto; padding: 20px;">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: auto; padding: 20px;">
 
   <div style="text-align: center; margin-bottom: 30px;">
-    <h1 style="font-size: 42px; color: #bc4749; margin-bottom: 10px;">Black-Jack TS</h3>
+    <h1 style="font-size: 42px; color: #bc4749; margin-bottom: 10px; font-family: 'Playfair Display SC', serif;">Black-Jack TS</h3>
     <p style="font-size: 16px;">A simple Blackjack game using HTML, CSS, and TypeScript</p>
   </div>
 
@@ -17,7 +25,7 @@
         <li>CSS</li>
         <li>TypeScript</li>
       </ul>
-      <a href="#live-demo" style="text-decoration: none; font-weight: bold; color: #2e86de;">Play Live Demo</a>
+      <a href="https://gwynejsn.github.io/black-jack-ts/" style="text-decoration: none; font-weight: bold; color: #2e86de;">Play Live Demo</a>
   </div>
 
   <hr style="margin: 40px 0;" />
@@ -50,8 +58,6 @@
     <li>Play again by clicking "Continue".</li>
   </ul>
 
-  <h2 id="live-demo">Live Demo</h2>
-  <a href="https://gwynejsn.github.io/black-jack-ts/" target="_blank"> BlackJack
   </a>
 
   <hr style="margin: 40px 0;" />
