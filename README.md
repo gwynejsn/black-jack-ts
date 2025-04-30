@@ -1,15 +1,7 @@
-<head>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap"
-    rel="stylesheet"
-  />
-</head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: auto; padding: 20px;">
+<body line-height: 1.6; max-width: 900px; margin: auto; padding: 20px;">
 
   <div style="text-align: center; margin-bottom: 30px;">
-    <h1 style="font-size: 42px; color: #bc4749; margin-bottom: 10px; font-family: 'Playfair Display SC', serif;">Black-Jack TS</h3>
+    <h1 style="font-size: 42px; color: #bc4749; margin-bottom: 10px;">Black-Jack TS</h3>
     <p style="font-size: 16px;">A simple Blackjack game using HTML, CSS, and TypeScript</p>
   </div>
 
@@ -51,26 +43,24 @@
 
   <h2>Usage</h2>
   <ul>
-    <li>Click "Deal" to start a new round.</li>
+    <li>Enter your bet and click "Bet" to start a new round.</li>
     <li>Click "Hit" to draw a card.</li>
     <li>Click "Stand" to end your turn and let the dealer play.</li>
     <li>Game displays win/loss result after each round.</li>
-    <li>Play again by clicking "New Game".</li>
+    <li>Play again by clicking "Continue".</li>
   </ul>
 
   <h2 id="live-demo">Live Demo</h2>
-  <a href="https://gwynejsn.github.io/black-jack-ts/" target="_blank">
-    <img src="./assets/demo.gif" alt="Blackjack Demo" style="max-width: 400px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2);" />
+  <a href="https://gwynejsn.github.io/black-jack-ts/" target="_blank"> BlackJack
   </a>
 
   <hr style="margin: 40px 0;" />
 
-  <h2>Roadmap</h2>
+  <h2>Features</h2>
   <ul>
     <li>Basic Blackjack Mechanics</li>
-    <li>Card Deck Shuffling</li>
-    <li>Dealer AI Logic</li>
-    <li>Improved UI & Animations</li>
+    <li>Card Deck</li>
+    <li>Dealer Logic</li>
   </ul>
   <p>See <a href="https://github.com/gwynejsn/black-jack-ts/issues" target="_blank">Issues Page</a> for suggestions or improvements.</p>
 
